@@ -23,6 +23,102 @@
     <ClCompile Include="ImageARGB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="chipmunk\chipmunk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpArbiter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpArray.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpBBTree.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpBody.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpCollision.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpConstraint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpDampedRotarySpring.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpDampedSpring.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpGearJoint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpGrooveJoint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpHashSet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpHastySpace.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpMarch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpPinJoint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpPivotJoint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpPolyline.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpPolyShape.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpRatchetJoint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpRobust.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpRotaryLimitJoint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpShape.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSimpleMotor.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSlideJoint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSpace.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSpaceComponent.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSpaceDebug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSpaceHash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSpaceQuery.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSpaceStep.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSpatialIndex.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipmunk\cpSweep1D.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="typedef_structs.h">
@@ -35,6 +131,99 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageARGB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\chipmunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\chipmunk_ffi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\chipmunk_private.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\chipmunk_structs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\chipmunk_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\chipmunk_unsafe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpArbiter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpBB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpConstraint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpDampedRotarySpring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpDampedSpring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpGearJoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpGrooveJoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpHastySpace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpMarch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpPinJoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpPivotJoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpPolyline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpPolyShape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpRatchetJoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpRobust.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpRotaryLimitJoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpShape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpSimpleMotor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpSlideJoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpSpace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpSpatialIndex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extern\chipmunk\cpVect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chipmunk\prime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
