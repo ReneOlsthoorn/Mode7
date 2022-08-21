@@ -28,7 +28,7 @@ void Mode7::Init() {
 	// Add a static line segment shape for the ground.
 	// We'll make it slightly tilted so the ball will roll off.
 	// We attach it to a static body to tell Chipmunk it shouldn't be movable.
-	ground = cpSegmentShapeNew(cpSpaceGetStaticBody(space), cpv(-20, 5), cpv(20, -5), 0);
+	ground = cpSegmentShapeNew(cpSpaceGetStaticBody(space), cpv(-20, 5), cpv(800, -5), 5);
 	cpShapeSetFriction(ground, 1);
 	cpShapeSetElasticity(ground, 1);
 	cpSpaceAddShape(space, ground);
@@ -55,7 +55,7 @@ void Mode7::Init() {
 	// They will all be attached to the body and move around to follow it.
 	ballShape = cpSpaceAddShape(space, cpCircleShapeNew(ballBody, radius, cpvzero));
 	cpShapeSetFriction(ballShape, 0.7);
-	cpShapeSetElasticity(ballShape, 0.5);
+	cpShapeSetElasticity(ballShape, 0.9);
 }
 
 void Mode7::Update() {
@@ -102,9 +102,8 @@ void Mode7::Update() {
 void Mode7::DrawBall(int x, int y) {
 	const int width = 10;
 
-	if ((x + width + 2 >= Graphics::ScreenDIMx) || (y + width + 2 >= Graphics::ScreenDIMy)) {
-		return;
-	}
+	if (x < width || y < width) { return; }
+	if ((x + width + 1 >= Graphics::ScreenDIMx) || (y + width + 1 >= Graphics::ScreenDIMy)) { return; };
 
 	ImageARGB screenARGB(graphics->pixels, Graphics::ScreenDIMx, Graphics::ScreenDIMy);
 	for (int i = 0; i < width; i++) {
