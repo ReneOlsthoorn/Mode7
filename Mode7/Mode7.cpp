@@ -23,15 +23,16 @@ void Mode7::Init() {
 
 	// Create an empty space.
 	space = cpSpaceNew();
-	cpSpaceSetGravity(space, gravity);
+	cpSpaceSetDamping(space, cpFloat(0.1));
+	//cpSpaceSetGravity(space, gravity);
 
 	// Add a static line segment shape for the ground.
 	// We'll make it slightly tilted so the ball will roll off.
 	// We attach it to a static body to tell Chipmunk it shouldn't be movable.
-	ground = cpSegmentShapeNew(cpSpaceGetStaticBody(space), cpv(-20, 5), cpv(800, -5), 5);
-	cpShapeSetFriction(ground, 1);
-	cpShapeSetElasticity(ground, 1);
-	cpSpaceAddShape(space, ground);
+	//ground = cpSegmentShapeNew(cpSpaceGetStaticBody(space), cpv(-20, 5), cpv(800, -5), 5);
+	//cpShapeSetFriction(ground, 1);
+	//cpShapeSetElasticity(ground, 1);
+	//cpSpaceAddShape(space, ground);
 
 	// Now let's make a ball that falls onto the line and rolls off.
 	// First we need to make a cpBody to hold the physical properties of the object.
@@ -48,7 +49,8 @@ void Mode7::Init() {
 	// The cpSpaceAdd*() functions return the thing that you are adding.
 	// It's convenient to create and add an object in one line.
 	ballBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-	cpBodySetPosition(ballBody, cpv(0, 300));
+	cpBodySetPosition(ballBody, cpv(fWorldX, fWorldY));
+	cpBodySetAngle(ballBody, cpFloat(fWorldAngle));
 
 	// Now we create the collision shape for the ball.
 	// You can create multiple collision shapes that point to the same body.
@@ -94,9 +96,17 @@ void Mode7::Update() {
 	//printf("Time is %5.2f. ballBody is at (%5.2f, %5.2f). It's velocity is (%5.2f, %5.2f)\n", time, pos.x, pos.y, vel.x, vel.y);
 	cpSpaceStep(space, timeStep);
 
-	int ballX = ((int)pos.x) + 40;
-	int ballY = Graphics::ScreenDIMy - ((int)pos.y) - 40;
+	fWorldX = pos.x;
+	fWorldY = 1024 - pos.y;
+	fWorldAngle = cpBodyGetAngle(ballBody);
+
+	double ballX = fWorldX;
+	double ballY = fWorldY / 2;
 	DrawBall(ballX, ballY);
+}
+
+void Mode7::SpacePressed() {
+	//cpBodySetForce(ballBody, cpv(0, 500));
 }
 
 void Mode7::DrawBall(int x, int y) {
@@ -114,6 +124,7 @@ void Mode7::DrawBall(int x, int y) {
 }
 
 void Mode7::GoUp() {
+	/*
 	fWorldX += 5.0f * cosf(fWorldAngle);
 	fWorldY -= 5.0f * sinf(fWorldAngle);
 
@@ -121,9 +132,25 @@ void Mode7::GoUp() {
 	if (fWorldX < 0.0f) { fWorldX = 0.0f; }
 	if (fWorldY >= nMapSize) { fWorldY = (float)nMapSize; }
 	if (fWorldY < 0.0f) { fWorldY = 0.0f; }
+	*/
+
+	/*  De oorsponkelijk formule voor het draaien van een punt om te oorsprong is:
+		float rotated_x = (relative_x * cosf(angle)) - (relative_y * sinf(angle));
+		float rotated_y = (relative_x * sinf(angle)) + (relative_y * cosf(angle));
+		Echter, omdat de origin linksboven ligt, moeten we sinf negatief maken, dus dat wordt: */
+
+	cpVect force = cpv(500, 0);
+
+	//double rotatedX = (force.x * cosf(angle)) + (force.y * sinf(angle));
+	//double rotatedY = -(force.x * sinf(angle)) + (force.y * cosf(angle));
+
+	//cpVect rotated = cpv(rotatedX, rotatedY);
+	cpVect rotated = cpvrotate(force, cpvforangle(fWorldAngle));
+	cpBodySetForce(ballBody, rotated);
 }
 
 void Mode7::GoDown() {
+	/*
 	fWorldX -= 5.0f * cosf(fWorldAngle);
 	fWorldY += 5.0f * sinf(fWorldAngle);
 
@@ -131,13 +158,22 @@ void Mode7::GoDown() {
 	if (fWorldX < 0.0f) { fWorldX = 0.0f; }
 	if (fWorldY >= nMapSize) { fWorldY = (float)nMapSize; }
 	if (fWorldY < 0.0f) { fWorldY = 0.0f; }
+	*/
 }
 
 void Mode7::TurnLeft() {
+	fWorldAngle = cpBodyGetAngle(ballBody);
 	fWorldAngle += 0.05;
+	cpBodySetAngle(ballBody, cpFloat(fWorldAngle));
+	//cpBodySetTorque(ballBody, cpFloat(50));
 }
 
 void Mode7::TurnRight() {
+	fWorldAngle = cpBodyGetAngle(ballBody);
 	fWorldAngle -= 0.05;
+	cpBodySetAngle(ballBody, cpFloat(fWorldAngle));
+	//cpBodySetAngularVelocity(ballBody, cpFloat(fWorldAngle));
+
+	//cpBodySetTorque(ballBody, cpFloat(-50));
 }
 

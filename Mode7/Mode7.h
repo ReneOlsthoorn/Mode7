@@ -14,7 +14,7 @@ public:
 
 	float fWorldX = 132.8f;
 	float fWorldY = 551.5f;
-	float fWorldAngle = 1.57f; //(3.141592f / 2.0f);  // pi/2
+	double fWorldAngle = 1.57f; //(3.141592f / 2.0f);  // pi/2
 
 	float fNear = (float)nMapSize * 0.025f;
 	float fFar = (float)nMapSize * 0.60f;
@@ -36,4 +36,5 @@ public:
 	void GoUp();
 	void GoDown();
 	void DrawBall(int x, int y);
+	void SpacePressed();
 };
