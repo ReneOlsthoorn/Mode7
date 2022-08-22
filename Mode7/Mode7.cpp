@@ -98,10 +98,10 @@ void Mode7::Update() {
 
 	fWorldX = pos.x;
 	fWorldY = 1024 - pos.y;
-	fWorldAngle = cpBodyGetAngle(ballBody);
+	fWorldAngle = (float)cpBodyGetAngle(ballBody);
 
-	double ballX = fWorldX;
-	double ballY = fWorldY / 2;
+	int ballX = fWorldX;
+	int ballY = fWorldY / 2;
 	DrawBall(ballX, ballY);
 }
 
@@ -162,18 +162,14 @@ void Mode7::GoDown() {
 }
 
 void Mode7::TurnLeft() {
-	fWorldAngle = cpBodyGetAngle(ballBody);
 	fWorldAngle += 0.05;
 	cpBodySetAngle(ballBody, cpFloat(fWorldAngle));
 	//cpBodySetTorque(ballBody, cpFloat(50));
 }
 
 void Mode7::TurnRight() {
-	fWorldAngle = cpBodyGetAngle(ballBody);
 	fWorldAngle -= 0.05;
 	cpBodySetAngle(ballBody, cpFloat(fWorldAngle));
-	//cpBodySetAngularVelocity(ballBody, cpFloat(fWorldAngle));
-
 	//cpBodySetTorque(ballBody, cpFloat(-50));
 }
 

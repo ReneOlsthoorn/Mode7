@@ -14,7 +14,7 @@ public:
 
 	float fWorldX = 132.8f;
 	float fWorldY = 551.5f;
-	double fWorldAngle = 1.57f; //(3.141592f / 2.0f);  // pi/2
+	float fWorldAngle = 1.57f; //(3.141592f / 2.0f);  // pi/2
 
 	float fNear = (float)nMapSize * 0.025f;
 	float fFar = (float)nMapSize * 0.60f;
