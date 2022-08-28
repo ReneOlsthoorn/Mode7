@@ -22,9 +22,8 @@ public:
 	float fFoVHalf = 3.141592f / 4.0f; //90 graden gedeeld door twee, omdat we twee keer een half doen.
 
 	cpSpace* space;
-	cpShape* ground;
-	cpBody* ballBody;
-	cpShape* ballShape;
+	cpBody* driverBody;
+	cpBody* dampedLeftBody;
 
 	Mode7();
 	~Mode7();

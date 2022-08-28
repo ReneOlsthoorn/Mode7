@@ -11,9 +11,8 @@ Mode7::Mode7()
 Mode7::~Mode7()
 {
 	// Clean up our objects and exit!
-	cpShapeFree(ballShape);
-	cpBodyFree(ballBody);
-	cpShapeFree(ground);
+	cpBodyFree(driverBody);
+	cpBodyFree(dampedLeftBody);
 	cpSpaceFree(space);
 }
 
@@ -23,21 +22,8 @@ void Mode7::Init() {
 
 	// Create an empty space.
 	space = cpSpaceNew();
-	cpSpaceSetDamping(space, cpFloat(0.1));
+	cpSpaceSetDamping(space, cpFloat(0.5));
 	//cpSpaceSetGravity(space, gravity);
-
-	// Add a static line segment shape for the ground.
-	// We'll make it slightly tilted so the ball will roll off.
-	// We attach it to a static body to tell Chipmunk it shouldn't be movable.
-	//ground = cpSegmentShapeNew(cpSpaceGetStaticBody(space), cpv(-20, 5), cpv(800, -5), 5);
-	//cpShapeSetFriction(ground, 1);
-	//cpShapeSetElasticity(ground, 1);
-	//cpSpaceAddShape(space, ground);
-
-	// Now let's make a ball that falls onto the line and rolls off.
-	// First we need to make a cpBody to hold the physical properties of the object.
-	// These include the mass, position, velocity, angle, etc. of the object.
-	// Then we attach collision shapes to the cpBody to give it a size and shape.
 
 	cpFloat radius = 5;
 	cpFloat mass = 1;
@@ -48,16 +34,21 @@ void Mode7::Init() {
 
 	// The cpSpaceAdd*() functions return the thing that you are adding.
 	// It's convenient to create and add an object in one line.
-	ballBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-	cpBodySetPosition(ballBody, cpv(fWorldX, fWorldY));
-	cpBodySetAngle(ballBody, cpFloat(fWorldAngle));
+	driverBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 
-	// Now we create the collision shape for the ball.
-	// You can create multiple collision shapes that point to the same body.
-	// They will all be attached to the body and move around to follow it.
-	ballShape = cpSpaceAddShape(space, cpCircleShapeNew(ballBody, radius, cpvzero));
-	cpShapeSetFriction(ballShape, 0.7);
-	cpShapeSetElasticity(ballShape, 0.9);
+	dampedLeftBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
+
+	cpBodySetPosition(driverBody, cpv(fWorldX, fWorldY));
+	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
+
+	float vectorLength = 130.0f;
+	float leftDampedfWorldX = fWorldX - (cosf(fWorldAngle) * vectorLength);
+	float leftDampedfWorldY = fWorldY + (sinf(fWorldAngle) * vectorLength);
+
+	cpBodySetPosition(dampedLeftBody, cpv(leftDampedfWorldX, leftDampedfWorldY));
+	cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
+
+	cpSpaceAddConstraint(space, cpDampedSpringNew(driverBody, dampedLeftBody, cpv(15, 0), cpv(-15, 0), 20.0f, 5.0f, 0.3f));
 }
 
 void Mode7::Update() {
@@ -89,20 +80,31 @@ void Mode7::Update() {
 	// Now that it's all set up, we simulate all the objects in the space by
 	// stepping forward through time in small increments called steps.
 	// It is *highly* recommended to use a fixed size time step.
-	cpFloat timeStep = 1.0 / 60.0;
+	const cpFloat timeStep = 1.0 / 60.0;
 
-	cpVect pos = cpBodyGetPosition(ballBody);
-	cpVect vel = cpBodyGetVelocity(ballBody);
-	//printf("Time is %5.2f. ballBody is at (%5.2f, %5.2f). It's velocity is (%5.2f, %5.2f)\n", time, pos.x, pos.y, vel.x, vel.y);
+	cpVect pos = cpBodyGetPosition(driverBody);
+	cpVect vel = cpBodyGetVelocity(driverBody);
+
+	float vectorLength = 30.0f;
+	float leftDampedfWorldX = pos.x - (cosf(fWorldAngle) * vectorLength);
+	float leftDampedfWorldY = pos.y + (sinf(fWorldAngle) * vectorLength);
+	cpBodySetPosition(dampedLeftBody, cpv(leftDampedfWorldX, leftDampedfWorldY));
+
 	cpSpaceStep(space, timeStep);
 
 	fWorldX = pos.x;
-	fWorldY = 1024 - pos.y;
-	fWorldAngle = (float)cpBodyGetAngle(ballBody);
+	fWorldY = 1024.0 - pos.y;
+	fWorldAngle = (float)cpBodyGetAngle(driverBody);
+
 
 	int ballX = fWorldX;
 	int ballY = fWorldY / 2;
 	DrawBall(ballX, ballY);
+
+	float dampedLeftfWorldX = leftDampedfWorldX;
+	float dampedLeftfWorldY = (1024.0 - leftDampedfWorldY) / 2;
+
+	DrawBall(dampedLeftfWorldX, dampedLeftfWorldY);
 }
 
 void Mode7::SpacePressed() {
@@ -139,14 +141,15 @@ void Mode7::GoUp() {
 		float rotated_y = (relative_x * sinf(angle)) + (relative_y * cosf(angle));
 		Echter, omdat de origin linksboven ligt, moeten we sinf negatief maken, dus dat wordt: */
 
-	cpVect force = cpv(500, 0);
+	cpVect force = cpv(200, 0);
 
 	//double rotatedX = (force.x * cosf(angle)) + (force.y * sinf(angle));
 	//double rotatedY = -(force.x * sinf(angle)) + (force.y * cosf(angle));
 
 	//cpVect rotated = cpv(rotatedX, rotatedY);
 	cpVect rotated = cpvrotate(force, cpvforangle(fWorldAngle));
-	cpBodySetForce(ballBody, rotated);
+	cpBodySetForce(driverBody, rotated);
+	cpBodySetForce(dampedLeftBody, rotated);
 }
 
 void Mode7::GoDown() {
@@ -163,13 +166,13 @@ void Mode7::GoDown() {
 
 void Mode7::TurnLeft() {
 	fWorldAngle += 0.05;
-	cpBodySetAngle(ballBody, cpFloat(fWorldAngle));
-	//cpBodySetTorque(ballBody, cpFloat(50));
+	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
+	cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
 }
 
 void Mode7::TurnRight() {
 	fWorldAngle -= 0.05;
-	cpBodySetAngle(ballBody, cpFloat(fWorldAngle));
-	//cpBodySetTorque(ballBody, cpFloat(-50));
+	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
+	cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
 }
 
