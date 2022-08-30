@@ -37,16 +37,24 @@ void Mode7::Init() {
 	driverBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 
 	dampedLeftBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
+	dampedRightBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 
 	cpBodySetPosition(driverBody, cpv(fWorldX, fWorldY));
 	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
 
-	float vectorLength = 130.0f;
-	float leftDampedfWorldX = fWorldX - (cosf(fWorldAngle) * vectorLength);
-	float leftDampedfWorldY = fWorldY + (sinf(fWorldAngle) * vectorLength);
+	float vectorLength = -30.0f;
+	float leftDampedfWorldX = fWorldX - (cosf(-fWorldAngle) * vectorLength);
+	float leftDampedfWorldY = fWorldY + (sinf(-fWorldAngle) * vectorLength);
 
 	cpBodySetPosition(dampedLeftBody, cpv(leftDampedfWorldX, leftDampedfWorldY));
 	cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
+
+	vectorLength = 30.0f;
+	float rightDampedfWorldX = fWorldX - (cosf(-fWorldAngle) * vectorLength);
+	float rightDampedfWorldY = fWorldY + (sinf(-fWorldAngle) * vectorLength);
+
+	cpBodySetPosition(dampedRightBody, cpv(rightDampedfWorldX, rightDampedfWorldY));
+	cpBodySetAngle(dampedRightBody, cpFloat(fWorldAngle));
 
 	cpSpaceAddConstraint(space, cpDampedSpringNew(driverBody, dampedLeftBody, cpv(15, 0), cpv(-15, 0), 20.0f, 5.0f, 0.3f));
 }
@@ -85,10 +93,15 @@ void Mode7::Update() {
 	cpVect pos = cpBodyGetPosition(driverBody);
 	cpVect vel = cpBodyGetVelocity(driverBody);
 
-	float vectorLength = 30.0f;
-	float leftDampedfWorldX = pos.x - (cosf(fWorldAngle) * vectorLength);
-	float leftDampedfWorldY = pos.y + (sinf(fWorldAngle) * vectorLength);
+	float vectorLength = -30.0f;
+	float leftDampedfWorldX = pos.x - (cosf(-fWorldAngle) * vectorLength);
+	float leftDampedfWorldY = pos.y + (sinf(-fWorldAngle) * vectorLength);
 	cpBodySetPosition(dampedLeftBody, cpv(leftDampedfWorldX, leftDampedfWorldY));
+
+	vectorLength = 30.0f;
+	float rightDampedfWorldX = pos.x - (cosf(-fWorldAngle) * vectorLength);
+	float rightDampedfWorldY = pos.y + (sinf(-fWorldAngle) * vectorLength);
+	cpBodySetPosition(dampedRightBody, cpv(rightDampedfWorldX, rightDampedfWorldY));
 
 	cpSpaceStep(space, timeStep);
 
@@ -105,6 +118,11 @@ void Mode7::Update() {
 	float dampedLeftfWorldY = (1024.0 - leftDampedfWorldY) / 2;
 
 	DrawBall(dampedLeftfWorldX, dampedLeftfWorldY);
+
+	float dampedRightfWorldX = rightDampedfWorldX;
+	float dampedRightfWorldY = (1024.0 - rightDampedfWorldY) / 2;
+
+	DrawBall(dampedRightfWorldX, dampedRightfWorldY);
 }
 
 void Mode7::SpacePressed() {
