@@ -35,6 +35,6 @@ public:
 	void TurnRight();
 	void GoUp();
 	void GoDown();
-	void DrawBall(int x, int y);
+	void DrawBall(int x, int y, Uint32 color);
 	void SpacePressed();
 };

@@ -3,6 +3,7 @@
 #include "chipmunk/chipmunk.h"
 
 extern Graphics* graphics;
+static int frameCounter = 0;
 
 Mode7::Mode7()
 {
@@ -12,7 +13,8 @@ Mode7::~Mode7()
 {
 	// Clean up our objects and exit!
 	cpBodyFree(driverBody);
-	cpBodyFree(dampedLeftBody);
+	//cpBodyFree(dampedLeftBody);
+	//cpBodyFree(dampedRightBody);
 	cpSpaceFree(space);
 }
 
@@ -36,12 +38,13 @@ void Mode7::Init() {
 	// It's convenient to create and add an object in one line.
 	driverBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 
-	dampedLeftBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-	dampedRightBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
+	//dampedLeftBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
+	//dampedRightBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 
 	cpBodySetPosition(driverBody, cpv(fWorldX, fWorldY));
 	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
 
+	/*
 	float vectorLength = -30.0f;
 	float leftDampedfWorldX = fWorldX - (cosf(-fWorldAngle) * vectorLength);
 	float leftDampedfWorldY = fWorldY + (sinf(-fWorldAngle) * vectorLength);
@@ -55,8 +58,9 @@ void Mode7::Init() {
 
 	cpBodySetPosition(dampedRightBody, cpv(rightDampedfWorldX, rightDampedfWorldY));
 	cpBodySetAngle(dampedRightBody, cpFloat(fWorldAngle));
+	*/
 
-	cpSpaceAddConstraint(space, cpDampedSpringNew(driverBody, dampedLeftBody, cpv(15, 0), cpv(-15, 0), 20.0f, 5.0f, 0.3f));
+	//cpSpaceAddConstraint(space, cpDampedSpringNew(driverBody, dampedLeftBody, cpv(15, 0), cpv(-15, 0), 20.0f, 5.0f, 0.3f));
 }
 
 void Mode7::Update() {
@@ -93,15 +97,36 @@ void Mode7::Update() {
 	cpVect pos = cpBodyGetPosition(driverBody);
 	cpVect vel = cpBodyGetVelocity(driverBody);
 
-	float vectorLength = -30.0f;
-	float leftDampedfWorldX = pos.x - (cosf(-fWorldAngle) * vectorLength);
-	float leftDampedfWorldY = pos.y + (sinf(-fWorldAngle) * vectorLength);
-	cpBodySetPosition(dampedLeftBody, cpv(leftDampedfWorldX, leftDampedfWorldY));
+	float vectorLength = 30.0f;
+	float leftDampedfWorldX = pos.x - (cosf(fWorldAngle + 0.5 * 3.141592) * vectorLength);
+	float leftDampedfWorldY = pos.y + (sinf(fWorldAngle + 0.5 * 3.141592) * vectorLength);
+	//cpBodySetPosition(dampedLeftBody, cpv(leftDampedfWorldX, leftDampedfWorldY));
 
 	vectorLength = 30.0f;
-	float rightDampedfWorldX = pos.x - (cosf(-fWorldAngle) * vectorLength);
-	float rightDampedfWorldY = pos.y + (sinf(-fWorldAngle) * vectorLength);
-	cpBodySetPosition(dampedRightBody, cpv(rightDampedfWorldX, rightDampedfWorldY));
+	float rightDampedfWorldX = pos.x - (cosf(fWorldAngle - 0.5 * 3.141592) * vectorLength);
+	float rightDampedfWorldY = pos.y + (sinf(fWorldAngle - 0.5 * 3.141592) * vectorLength);
+	//cpBodySetPosition(dampedRightBody, cpv(rightDampedfWorldX, rightDampedfWorldY));
+
+	cpVect leftPoint = cpv(leftDampedfWorldX, leftDampedfWorldY);
+	cpVect rightPoint = cpv(rightDampedfWorldX, rightDampedfWorldY);
+
+
+	cpVect vAngle = cpvforangle(fWorldAngle);
+	cpVect subbed = cpvsub(vAngle, vel);
+
+	cpVect toPoint = cpvsub(leftPoint, pos);
+	bool goingLeft = cpvdot(toPoint, vel) > 0.1;
+
+	toPoint = cpvsub(rightPoint, pos);
+	bool goingRight = cpvdot(toPoint, vel) > 0.1;
+
+	//frameCounter++;
+	if (goingLeft) {
+		cpBodyApplyForceAtWorldPoint(driverBody, cpvsub(pos, leftPoint), leftPoint);
+	}
+	if (goingRight) {
+		cpBodyApplyForceAtWorldPoint(driverBody, cpvsub(pos, rightPoint), rightPoint);
+	}
 
 	cpSpaceStep(space, timeStep);
 
@@ -112,24 +137,24 @@ void Mode7::Update() {
 
 	int ballX = fWorldX;
 	int ballY = fWorldY / 2;
-	DrawBall(ballX, ballY);
+	DrawBall(ballX, ballY, ImageARGB::ARGB_YELLOW);
 
 	float dampedLeftfWorldX = leftDampedfWorldX;
 	float dampedLeftfWorldY = (1024.0 - leftDampedfWorldY) / 2;
 
-	DrawBall(dampedLeftfWorldX, dampedLeftfWorldY);
+	DrawBall(dampedLeftfWorldX, dampedLeftfWorldY, ImageARGB::ARGB_RED);
 
 	float dampedRightfWorldX = rightDampedfWorldX;
 	float dampedRightfWorldY = (1024.0 - rightDampedfWorldY) / 2;
 
-	DrawBall(dampedRightfWorldX, dampedRightfWorldY);
+	DrawBall(dampedRightfWorldX, dampedRightfWorldY, ImageARGB::ARGB_YELLOW);
 }
 
 void Mode7::SpacePressed() {
 	//cpBodySetForce(ballBody, cpv(0, 500));
 }
 
-void Mode7::DrawBall(int x, int y) {
+void Mode7::DrawBall(int x, int y, Uint32 color) {
 	const int width = 10;
 
 	if (x < width || y < width) { return; }
@@ -138,7 +163,7 @@ void Mode7::DrawBall(int x, int y) {
 	ImageARGB screenARGB(graphics->pixels, Graphics::ScreenDIMx, Graphics::ScreenDIMy);
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < width; j++) {
-			screenARGB.SetPixel(x+i, y+j, ImageARGB::ARGB_YELLOW);
+			screenARGB.SetPixel(x+i, y+j, color);
 		}
 	}
 }
@@ -167,7 +192,7 @@ void Mode7::GoUp() {
 	//cpVect rotated = cpv(rotatedX, rotatedY);
 	cpVect rotated = cpvrotate(force, cpvforangle(fWorldAngle));
 	cpBodySetForce(driverBody, rotated);
-	cpBodySetForce(dampedLeftBody, rotated);
+	//cpBodySetForce(dampedLeftBody, rotated);
 }
 
 void Mode7::GoDown() {
@@ -185,12 +210,12 @@ void Mode7::GoDown() {
 void Mode7::TurnLeft() {
 	fWorldAngle += 0.05;
 	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
-	cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
+	//cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
 }
 
 void Mode7::TurnRight() {
 	fWorldAngle -= 0.05;
 	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
-	cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
+	//cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
 }
 
