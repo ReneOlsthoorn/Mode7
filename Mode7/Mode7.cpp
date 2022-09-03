@@ -118,10 +118,10 @@ void Mode7::Update() {
 
 	//frameCounter++;
 	if (goingLeft) {
-		cpBodyApplyForceAtWorldPoint(driverBody, cpvsub(pos, leftPoint), leftPoint);
+		//cpBodyApplyForceAtWorldPoint(driverBody, cpvsub(pos, leftPoint), leftPoint);
 	}
 	if (goingRight) {
-		cpBodyApplyForceAtWorldPoint(driverBody, cpvsub(pos, rightPoint), rightPoint);
+		//cpBodyApplyForceAtWorldPoint(driverBody, cpvsub(pos, rightPoint), rightPoint);
 	}
 
 	cpSpaceStep(space, timeStep);
