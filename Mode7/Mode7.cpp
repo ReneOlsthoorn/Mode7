@@ -24,7 +24,7 @@ void Mode7::Init() {
 
 	// Create an empty space.
 	space = cpSpaceNew();
-	cpSpaceSetDamping(space, cpFloat(0.5));
+	//cpSpaceSetDamping(space, cpFloat(0.5));
 	//cpSpaceSetGravity(space, gravity);
 
 	cpFloat radius = 5;
@@ -100,25 +100,21 @@ void Mode7::Update() {
 	float vectorLength = 30.0f;
 	float leftDampedfWorldX = pos.x - (cosf(fWorldAngle + 0.5 * 3.141592) * vectorLength);
 	float leftDampedfWorldY = pos.y + (sinf(fWorldAngle + 0.5 * 3.141592) * vectorLength);
-	//cpBodySetPosition(dampedLeftBody, cpv(leftDampedfWorldX, leftDampedfWorldY));
+	cpVect leftPoint = cpv(leftDampedfWorldX, leftDampedfWorldY);
 
 	vectorLength = 30.0f;
 	float rightDampedfWorldX = pos.x - (cosf(fWorldAngle - 0.5 * 3.141592) * vectorLength);
 	float rightDampedfWorldY = pos.y + (sinf(fWorldAngle - 0.5 * 3.141592) * vectorLength);
-	//cpBodySetPosition(dampedRightBody, cpv(rightDampedfWorldX, rightDampedfWorldY));
-
-	cpVect leftPoint = cpv(leftDampedfWorldX, leftDampedfWorldY);
 	cpVect rightPoint = cpv(rightDampedfWorldX, rightDampedfWorldY);
 
-
-	cpVect vAngle = cpvforangle(fWorldAngle);
-	cpVect subbed = cpvsub(vAngle, vel);
+	//cpVect vAngle = cpvforangle(fWorldAngle);
+	//cpVect subbed = cpvsub(vel, vAngle);
 
 	cpVect toPoint = cpvsub(leftPoint, pos);
-	bool goingLeft = cpvdot(toPoint, vel) > 0.1;
+	bool goingLeft = cpvdot(toPoint, vel) > 0.0;
 
 	toPoint = cpvsub(rightPoint, pos);
-	bool goingRight = cpvdot(toPoint, vel) > 0.1;
+	bool goingRight = cpvdot(toPoint, vel) > 0.0;
 
 	//frameCounter++;
 	if (goingLeft) {
@@ -142,12 +138,12 @@ void Mode7::Update() {
 	float dampedLeftfWorldX = leftDampedfWorldX;
 	float dampedLeftfWorldY = (1024.0 - leftDampedfWorldY) / 2;
 
-	DrawBall(dampedLeftfWorldX, dampedLeftfWorldY, ImageARGB::ARGB_RED);
+	DrawBall(dampedLeftfWorldX, dampedLeftfWorldY, goingLeft ? ImageARGB::ARGB_CYAN : ImageARGB::ARGB_RED);
 
 	float dampedRightfWorldX = rightDampedfWorldX;
 	float dampedRightfWorldY = (1024.0 - rightDampedfWorldY) / 2;
 
-	DrawBall(dampedRightfWorldX, dampedRightfWorldY, ImageARGB::ARGB_YELLOW);
+	DrawBall(dampedRightfWorldX, dampedRightfWorldY, goingRight ? ImageARGB::ARGB_CYAN : ImageARGB::ARGB_BLUE);
 }
 
 void Mode7::SpacePressed() {
