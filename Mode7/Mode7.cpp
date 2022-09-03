@@ -24,7 +24,7 @@ void Mode7::Init() {
 
 	// Create an empty space.
 	space = cpSpaceNew();
-	//cpSpaceSetDamping(space, cpFloat(0.5));
+	cpSpaceSetDamping(space, cpFloat(0.5));
 	//cpSpaceSetGravity(space, gravity);
 
 	cpFloat radius = 5;
@@ -126,10 +126,12 @@ void Mode7::Update() {
 
 	cpSpaceStep(space, timeStep);
 
+
+
+
 	fWorldX = pos.x;
 	fWorldY = 1024.0 - pos.y;
 	fWorldAngle = (float)cpBodyGetAngle(driverBody);
-
 
 	int ballX = fWorldX;
 	int ballY = fWorldY / 2;
@@ -137,14 +139,20 @@ void Mode7::Update() {
 
 	float dampedLeftfWorldX = leftDampedfWorldX;
 	float dampedLeftfWorldY = (1024.0 - leftDampedfWorldY) / 2;
-
-	DrawBall(dampedLeftfWorldX, dampedLeftfWorldY, goingLeft ? ImageARGB::ARGB_CYAN : ImageARGB::ARGB_RED);
+	if (goingLeft) {
+		DrawBall(dampedLeftfWorldX, dampedLeftfWorldY, goingLeft ? ImageARGB::ARGB_MAGENTA : ImageARGB::ARGB_RED);
+	}
 
 	float dampedRightfWorldX = rightDampedfWorldX;
 	float dampedRightfWorldY = (1024.0 - rightDampedfWorldY) / 2;
 
-	DrawBall(dampedRightfWorldX, dampedRightfWorldY, goingRight ? ImageARGB::ARGB_CYAN : ImageARGB::ARGB_BLUE);
+	if (goingRight) {
+		DrawBall(dampedRightfWorldX, dampedRightfWorldY, goingRight ? ImageARGB::ARGB_WHITE : ImageARGB::ARGB_BLUE);
+	}
 }
+
+//void Mode7::
+
 
 void Mode7::SpacePressed() {
 	//cpBodySetForce(ballBody, cpv(0, 500));
