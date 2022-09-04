@@ -4,6 +4,8 @@
 
 extern Graphics* graphics;
 static int frameCounter = 0;
+static int leftForceCounter = 0;
+static int rightForceCounter = 0;
 
 Mode7::Mode7()
 {
@@ -13,14 +15,12 @@ Mode7::~Mode7()
 {
 	// Clean up our objects and exit!
 	cpBodyFree(driverBody);
-	//cpBodyFree(dampedLeftBody);
-	//cpBodyFree(dampedRightBody);
 	cpSpaceFree(space);
 }
 
 void Mode7::Init() {
 	// cpVect is a 2D vector and cpv() is a shortcut for initializing them.
-	cpVect gravity = cpv(0, -500);
+	//cpVect gravity = cpv(0, -500);
 
 	// Create an empty space.
 	space = cpSpaceNew();
@@ -38,29 +38,8 @@ void Mode7::Init() {
 	// It's convenient to create and add an object in one line.
 	driverBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 
-	//dampedLeftBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-	//dampedRightBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-
 	cpBodySetPosition(driverBody, cpv(fWorldX, fWorldY));
 	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
-
-	/*
-	float vectorLength = -30.0f;
-	float leftDampedfWorldX = fWorldX - (cosf(-fWorldAngle) * vectorLength);
-	float leftDampedfWorldY = fWorldY + (sinf(-fWorldAngle) * vectorLength);
-
-	cpBodySetPosition(dampedLeftBody, cpv(leftDampedfWorldX, leftDampedfWorldY));
-	cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
-
-	vectorLength = 30.0f;
-	float rightDampedfWorldX = fWorldX - (cosf(-fWorldAngle) * vectorLength);
-	float rightDampedfWorldY = fWorldY + (sinf(-fWorldAngle) * vectorLength);
-
-	cpBodySetPosition(dampedRightBody, cpv(rightDampedfWorldX, rightDampedfWorldY));
-	cpBodySetAngle(dampedRightBody, cpFloat(fWorldAngle));
-	*/
-
-	//cpSpaceAddConstraint(space, cpDampedSpringNew(driverBody, dampedLeftBody, cpv(15, 0), cpv(-15, 0), 20.0f, 5.0f, 0.3f));
 }
 
 void Mode7::Update() {
@@ -98,13 +77,13 @@ void Mode7::Update() {
 	cpVect vel = cpBodyGetVelocity(driverBody);
 
 	float vectorLength = 30.0f;
-	float leftDampedfWorldX = pos.x - (cosf(fWorldAngle + 0.5 * 3.141592) * vectorLength);
-	float leftDampedfWorldY = pos.y + (sinf(fWorldAngle + 0.5 * 3.141592) * vectorLength);
+	float leftDampedfWorldX = pos.x - (cosf(-fWorldAngle + 0.5 * 3.141592) * vectorLength);
+	float leftDampedfWorldY = pos.y + (sinf(-fWorldAngle + 0.5 * 3.141592) * vectorLength);
 	cpVect leftPoint = cpv(leftDampedfWorldX, leftDampedfWorldY);
 
 	vectorLength = 30.0f;
-	float rightDampedfWorldX = pos.x - (cosf(fWorldAngle - 0.5 * 3.141592) * vectorLength);
-	float rightDampedfWorldY = pos.y + (sinf(fWorldAngle - 0.5 * 3.141592) * vectorLength);
+	float rightDampedfWorldX = pos.x - (cosf(-fWorldAngle - 0.5 * 3.141592) * vectorLength);
+	float rightDampedfWorldY = pos.y + (sinf(-fWorldAngle - 0.5 * 3.141592) * vectorLength);
 	cpVect rightPoint = cpv(rightDampedfWorldX, rightDampedfWorldY);
 
 	//cpVect vAngle = cpvforangle(fWorldAngle);
@@ -118,14 +97,21 @@ void Mode7::Update() {
 
 	//frameCounter++;
 	if (goingLeft) {
-		//cpBodyApplyForceAtWorldPoint(driverBody, cpvsub(pos, leftPoint), leftPoint);
+		cpBodyApplyForceAtWorldPoint(driverBody, cpvmult(cpvsub(pos, leftPoint), leftForceCounter * 0.70), leftPoint);
+		leftForceCounter++;
+	}
+	else {
+		leftForceCounter = 0;
 	}
 	if (goingRight) {
-		//cpBodyApplyForceAtWorldPoint(driverBody, cpvsub(pos, rightPoint), rightPoint);
+		cpBodyApplyForceAtWorldPoint(driverBody, cpvmult(cpvsub(pos, rightPoint), rightForceCounter * 0.70), rightPoint);
+		rightForceCounter++;
+	}
+	else {
+		rightForceCounter = 0;
 	}
 
 	cpSpaceStep(space, timeStep);
-
 
 
 
@@ -150,8 +136,6 @@ void Mode7::Update() {
 		DrawBall(dampedRightfWorldX, dampedRightfWorldY, goingRight ? ImageARGB::ARGB_WHITE : ImageARGB::ARGB_BLUE);
 	}
 }
-
-//void Mode7::
 
 
 void Mode7::SpacePressed() {
@@ -183,20 +167,9 @@ void Mode7::GoUp() {
 	if (fWorldY < 0.0f) { fWorldY = 0.0f; }
 	*/
 
-	/*  De oorsponkelijk formule voor het draaien van een punt om te oorsprong is:
-		float rotated_x = (relative_x * cosf(angle)) - (relative_y * sinf(angle));
-		float rotated_y = (relative_x * sinf(angle)) + (relative_y * cosf(angle));
-		Echter, omdat de origin linksboven ligt, moeten we sinf negatief maken, dus dat wordt: */
-
 	cpVect force = cpv(200, 0);
-
-	//double rotatedX = (force.x * cosf(angle)) + (force.y * sinf(angle));
-	//double rotatedY = -(force.x * sinf(angle)) + (force.y * cosf(angle));
-
-	//cpVect rotated = cpv(rotatedX, rotatedY);
 	cpVect rotated = cpvrotate(force, cpvforangle(fWorldAngle));
 	cpBodySetForce(driverBody, rotated);
-	//cpBodySetForce(dampedLeftBody, rotated);
 }
 
 void Mode7::GoDown() {
@@ -212,14 +185,19 @@ void Mode7::GoDown() {
 }
 
 void Mode7::TurnLeft() {
-	fWorldAngle += 0.05;
+	fWorldAngle += 0.03;
 	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
+	//cpBodySetTorque(driverBody, 2);
+	//cpBodySetAngularVelocity(driverBody, 1);
+	//cpBodySetTorque(driverBody, 20);
 	//cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
 }
 
 void Mode7::TurnRight() {
-	fWorldAngle -= 0.05;
+	fWorldAngle -= 0.03;
 	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
 	//cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
+	//cpBodySetAngularVelocity(driverBody, -1);
+	//cpBodySetTorque(driverBody, -20);
 }
 

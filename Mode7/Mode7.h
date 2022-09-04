@@ -23,8 +23,6 @@ public:
 
 	cpSpace* space;
 	cpBody* driverBody;
-	cpBody* dampedLeftBody;
-	cpBody* dampedRightBody;
 
 	Mode7();
 	~Mode7();
