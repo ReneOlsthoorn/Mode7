@@ -38,7 +38,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 	while (running)
 	{
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
-		if (state[SDL_SCANCODE_SPACE]) { mode7->SpacePressed(); }
 		if (state[SDL_SCANCODE_LEFT]) {	mode7->TurnLeft(); }
 		if (state[SDL_SCANCODE_RIGHT]) { mode7->TurnRight(); }
 		if (state[SDL_SCANCODE_UP]) { mode7->GoUp(); }

@@ -4,7 +4,6 @@
 #include "typedef_structs.h"
 #include "Graphics.h"
 #include "ImageARGB.h"
-#include "chipmunk/chipmunk.h"
 
 
 class Mode7
@@ -21,9 +20,6 @@ public:
 
 	float fFoVHalf = 3.141592f / 4.0f; //90 graden gedeeld door twee, omdat we twee keer een half doen.
 
-	cpSpace* space;
-	cpBody* driverBody;
-
 	Mode7();
 	~Mode7();
 
@@ -33,6 +29,4 @@ public:
 	void TurnRight();
 	void GoUp();
 	void GoDown();
-	void DrawBall(int x, int y, Uint32 color);
-	void SpacePressed();
 };

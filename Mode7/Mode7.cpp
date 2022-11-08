@@ -1,45 +1,16 @@
 #include "Mode7.h"
 #include "ImageARGB.h"
-#include "chipmunk/chipmunk.h"
 
 extern Graphics* graphics;
-static int frameCounter = 0;
-static int leftForceCounter = 0;
-static int rightForceCounter = 0;
 
-Mode7::Mode7()
-{
+
+Mode7::Mode7() {
 }
 
-Mode7::~Mode7()
-{
-	// Clean up our objects and exit!
-	cpBodyFree(driverBody);
-	cpSpaceFree(space);
+Mode7::~Mode7() {
 }
 
 void Mode7::Init() {
-	// cpVect is a 2D vector and cpv() is a shortcut for initializing them.
-	//cpVect gravity = cpv(0, -500);
-
-	// Create an empty space.
-	space = cpSpaceNew();
-	cpSpaceSetDamping(space, cpFloat(0.5));
-	//cpSpaceSetGravity(space, gravity);
-
-	cpFloat radius = 5;
-	cpFloat mass = 1;
-
-	// The moment of inertia is like mass for rotation
-	// Use the cpMomentFor*() functions to help you approximate it.
-	cpFloat moment = cpMomentForCircle(mass, 0, radius, cpvzero);
-
-	// The cpSpaceAdd*() functions return the thing that you are adding.
-	// It's convenient to create and add an object in one line.
-	driverBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-
-	cpBodySetPosition(driverBody, cpv(fWorldX, fWorldY));
-	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
 }
 
 void Mode7::Update() {
@@ -67,97 +38,9 @@ void Mode7::Update() {
 			screenARGB.SetPixel(x, y, pixelColor);
 		}
 	}
-
-	// Now that it's all set up, we simulate all the objects in the space by
-	// stepping forward through time in small increments called steps.
-	// It is *highly* recommended to use a fixed size time step.
-	const cpFloat timeStep = 1.0 / 60.0;
-
-	cpVect pos = cpBodyGetPosition(driverBody);
-	cpVect vel = cpBodyGetVelocity(driverBody);
-
-	float vectorLength = 30.0f;
-	float leftDampedfWorldX = pos.x - (cosf(-fWorldAngle + 0.5 * 3.141592) * vectorLength);
-	float leftDampedfWorldY = pos.y + (sinf(-fWorldAngle + 0.5 * 3.141592) * vectorLength);
-	cpVect leftPoint = cpv(leftDampedfWorldX, leftDampedfWorldY);
-
-	vectorLength = 30.0f;
-	float rightDampedfWorldX = pos.x - (cosf(-fWorldAngle - 0.5 * 3.141592) * vectorLength);
-	float rightDampedfWorldY = pos.y + (sinf(-fWorldAngle - 0.5 * 3.141592) * vectorLength);
-	cpVect rightPoint = cpv(rightDampedfWorldX, rightDampedfWorldY);
-
-	//cpVect vAngle = cpvforangle(fWorldAngle);
-	//cpVect subbed = cpvsub(vel, vAngle);
-
-	cpVect toPoint = cpvsub(leftPoint, pos);
-	bool goingLeft = cpvdot(toPoint, vel) > 0.0;
-
-	toPoint = cpvsub(rightPoint, pos);
-	bool goingRight = cpvdot(toPoint, vel) > 0.0;
-
-	//frameCounter++;
-	if (goingLeft) {
-		cpBodyApplyForceAtWorldPoint(driverBody, cpvmult(cpvsub(pos, leftPoint), leftForceCounter * 0.70), leftPoint);
-		leftForceCounter++;
-	}
-	else {
-		leftForceCounter = 0;
-	}
-	if (goingRight) {
-		cpBodyApplyForceAtWorldPoint(driverBody, cpvmult(cpvsub(pos, rightPoint), rightForceCounter * 0.70), rightPoint);
-		rightForceCounter++;
-	}
-	else {
-		rightForceCounter = 0;
-	}
-
-	cpSpaceStep(space, timeStep);
-
-
-
-	fWorldX = pos.x;
-	fWorldY = 1024.0 - pos.y;
-	fWorldAngle = (float)cpBodyGetAngle(driverBody);
-
-	int ballX = fWorldX;
-	int ballY = fWorldY / 2;
-	DrawBall(ballX, ballY, ImageARGB::ARGB_YELLOW);
-
-	float dampedLeftfWorldX = leftDampedfWorldX;
-	float dampedLeftfWorldY = (1024.0 - leftDampedfWorldY) / 2;
-	if (goingLeft) {
-		DrawBall(dampedLeftfWorldX, dampedLeftfWorldY, goingLeft ? ImageARGB::ARGB_MAGENTA : ImageARGB::ARGB_RED);
-	}
-
-	float dampedRightfWorldX = rightDampedfWorldX;
-	float dampedRightfWorldY = (1024.0 - rightDampedfWorldY) / 2;
-
-	if (goingRight) {
-		DrawBall(dampedRightfWorldX, dampedRightfWorldY, goingRight ? ImageARGB::ARGB_WHITE : ImageARGB::ARGB_BLUE);
-	}
-}
-
-
-void Mode7::SpacePressed() {
-	//cpBodySetForce(ballBody, cpv(0, 500));
-}
-
-void Mode7::DrawBall(int x, int y, Uint32 color) {
-	const int width = 10;
-
-	if (x < width || y < width) { return; }
-	if ((x + width + 1 >= Graphics::ScreenDIMx) || (y + width + 1 >= Graphics::ScreenDIMy)) { return; };
-
-	ImageARGB screenARGB(graphics->pixels, Graphics::ScreenDIMx, Graphics::ScreenDIMy);
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < width; j++) {
-			screenARGB.SetPixel(x+i, y+j, color);
-		}
-	}
 }
 
 void Mode7::GoUp() {
-	/*
 	fWorldX += 5.0f * cosf(fWorldAngle);
 	fWorldY -= 5.0f * sinf(fWorldAngle);
 
@@ -165,15 +48,9 @@ void Mode7::GoUp() {
 	if (fWorldX < 0.0f) { fWorldX = 0.0f; }
 	if (fWorldY >= nMapSize) { fWorldY = (float)nMapSize; }
 	if (fWorldY < 0.0f) { fWorldY = 0.0f; }
-	*/
-
-	cpVect force = cpv(200, 0);
-	cpVect rotated = cpvrotate(force, cpvforangle(fWorldAngle));
-	cpBodySetForce(driverBody, rotated);
 }
 
 void Mode7::GoDown() {
-	/*
 	fWorldX -= 5.0f * cosf(fWorldAngle);
 	fWorldY += 5.0f * sinf(fWorldAngle);
 
@@ -181,23 +58,13 @@ void Mode7::GoDown() {
 	if (fWorldX < 0.0f) { fWorldX = 0.0f; }
 	if (fWorldY >= nMapSize) { fWorldY = (float)nMapSize; }
 	if (fWorldY < 0.0f) { fWorldY = 0.0f; }
-	*/
 }
 
 void Mode7::TurnLeft() {
-	fWorldAngle += 0.03;
-	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
-	//cpBodySetTorque(driverBody, 2);
-	//cpBodySetAngularVelocity(driverBody, 1);
-	//cpBodySetTorque(driverBody, 20);
-	//cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
+	fWorldAngle += 0.05;
 }
 
 void Mode7::TurnRight() {
-	fWorldAngle -= 0.03;
-	cpBodySetAngle(driverBody, cpFloat(fWorldAngle));
-	//cpBodySetAngle(dampedLeftBody, cpFloat(fWorldAngle));
-	//cpBodySetAngularVelocity(driverBody, -1);
-	//cpBodySetTorque(driverBody, -20);
+	fWorldAngle -= 0.05;
 }
 
