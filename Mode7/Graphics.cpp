@@ -37,7 +37,7 @@ void Graphics::LoadImages()
 {
 	int picx, picy, picn;
 	
-	racetrack = stbi_load("c:\\assembly\\Mode7\\Graphics\\mario_level2.png", &picx, &picy, &picn, 4); // 1024 * 1024
+	racetrack = stbi_load("c:\\assembly\\Mode7\\Graphics\\do_not_use.png", &picx, &picy, &picn, 4); // 1024 * 1024
 	FlipRedAndGreenInImage(racetrack, picx, picy);
 	racetrackDIMx = picx;
 	racetrackDIMy = picy;
