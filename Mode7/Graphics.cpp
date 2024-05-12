@@ -18,10 +18,6 @@ Graphics::~Graphics()
 	if (racetrack != NULL) {
 		stbi_image_free(racetrack);
 	}
-
-	if (achtergrond != NULL) {
-		stbi_image_free(achtergrond);
-	}
 }
 
 void Graphics::FlipRedAndGreenInImage(BYTE* image, int SizeX, int SizeY)

@@ -17,7 +17,6 @@ public:
 	static const int QuadSize;
 
 	BYTE* pixels = NULL;
-	BYTE* achtergrond = NULL;
 	BYTE* racetrack = NULL;
 	int racetrackDIMx, racetrackDIMy;
 
